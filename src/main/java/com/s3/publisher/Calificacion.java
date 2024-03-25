@@ -30,6 +30,7 @@ public class Calificacion {
         this.publicacionId = publicacionId;
     }
 
+
     public int getValor() {
         return valor;
     }
