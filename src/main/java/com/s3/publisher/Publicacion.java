@@ -7,14 +7,15 @@ public class Publicacion {
     private String titulo;
     private String contenido;
     private List<Comentario> comentarios;
+    private List<Integer> calificaciones;
 
-    // Constructor, getters y setters
     public Publicacion() {}
 
-    public Publicacion(int id, String titulo, String contenido, List<Comentario> comentarios) {
+    public Publicacion(int id, String titulo, String contenido, List<Integer> calificaciones, List<Comentario> comentarios) {
         this.id = id;
         this.titulo = titulo;
         this.contenido = contenido;
+        this.calificaciones = calificaciones;
         this.comentarios = comentarios;
     }
 
@@ -48,5 +49,24 @@ public class Publicacion {
 
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public void setCalificaciones(List<Integer> calificaciones) {
+        this.calificaciones = calificaciones;
+    }
+
+    public List<Integer> getCalificaciones() {
+        return calificaciones;
+    }
+
+    public double calcularPromedioCalificaciones() {
+        if (calificaciones == null || calificaciones.isEmpty()) {
+            return 0.0;
+        }
+        int total = 0;
+        for (int calificacion : calificaciones) {
+            total += calificacion;
+        }
+        return (double) total / calificaciones.size();
     }
 }

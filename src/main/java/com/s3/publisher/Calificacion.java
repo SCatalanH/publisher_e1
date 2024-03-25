@@ -5,7 +5,7 @@ public class Calificacion {
     private int publicacionId;
     private int valor;
 
-    // Constructor, getters y setters
+    
     public Calificacion() {}
 
     public Calificacion(int id, int publicacionId, int valor) {

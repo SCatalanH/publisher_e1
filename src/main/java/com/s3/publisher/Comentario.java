@@ -5,7 +5,6 @@ public class Comentario {
     private int publicacionId;
     private String texto;
 
-    // Constructor, getters y setters
     public Comentario() {}
 
     public Comentario(int id, int publicacionId, String texto) {

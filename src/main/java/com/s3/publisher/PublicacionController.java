@@ -1,6 +1,8 @@
 package com.s3.publisher;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.ArrayList;
@@ -15,25 +17,27 @@ public class PublicacionController {
     public PublicacionController() {    
         this.publicaciones = new ArrayList<>();
         // Datos de ejemplo
-        this.publicaciones.add(new Publicacion(1, "Ingenieria de Software", "Esta prueba es de la carrera de Ing de Software", Arrays.asList(
-        new Comentario(1, 1, "Veremos si me acuerdo de algo de lo que vi el semestre pasado"),
-        new Comentario(2, 1, "Definitivamente no recuerdo nada")
+        this.publicaciones.add(new Publicacion(1, "Ingenieria de Software", "Esta prueba es de la carrera de Ing de Software", Arrays.asList(4, 5, 3), Arrays.asList(
+            new Comentario(1, 1, "Veremos si me acuerdo de algo de lo que vi el semestre pasado"),
+            new Comentario(2, 1, "Definitivamente no recuerdo nada")
         )));
 
-        this.publicaciones.add(new Publicacion(2, "Desarrollo Fullstack I", "Un verdadero desafio de cara al bimestre", Arrays.asList(
+        this.publicaciones.add(new Publicacion(2, "Desarrollo Fullstack I", "Un verdadero desafio de cara al bimestre", Arrays.asList(2, 4, 3, 5), Arrays.asList(
         new Comentario(3, 2, "Veremos como nos va, ojalá bien"),
         new Comentario(4, 2, "Igual siempre hay que tener un toque de creatividad")
         )));
 
-        this.publicaciones.add(new Publicacion(3, "World of Warcraft", "El MMORPG mas famoso del mundo", Arrays.asList(
+        this.publicaciones.add(new Publicacion(3, "World of Warcraft", "El MMORPG mas famoso del mundo",Arrays.asList(5, 5, 5), Arrays.asList(
             new Comentario(5, 3, "Le tengo fe a las nuevas expansiones"),
             new Comentario(6, 3, "Lok'Tar")
         )));
 
-        this.publicaciones.add(new Publicacion(4, "Base de Datos Aplicada", "Estamos dando paralelamente esta asignatura", Arrays.asList(
+        this.publicaciones.add(new Publicacion(4, "Base de Datos Aplicada", "Estamos dando paralelamente esta asignatura", Arrays.asList(1, 2, 1, 3, 2), Arrays.asList(
             new Comentario(7, 4, "No voy a mentir, no recordaba como modelar bases de datos"),
             new Comentario(8, 4, "Igual se saca adelante, pero hay que hacer memoria")
         )));
+        
+
         
         
     }
@@ -76,37 +80,63 @@ public class PublicacionController {
     }
 
     @GetMapping("/publicaciones/{publicacionId}/comentarios/{comentarioId}")
-public Comentario obtenerComentarioDePublicacion(@PathVariable int publicacionId, @PathVariable int comentarioId) {
-    // Buscar la publicación por su ID
-    Publicacion publicacion = buscarPublicacionPorId(publicacionId);
+    public Comentario obtenerComentarioDePublicacion(@PathVariable int publicacionId, @PathVariable int comentarioId) {
+        // Buscar la publicación por su ID
+        Publicacion publicacion = buscarPublicacionPorId(publicacionId);
 
-    // Verificar si la publicación existe
-    if (publicacion != null) {
-        // Obtener la lista de comentarios de la publicación
-        List<Comentario> comentarios = publicacion.getComentarios();
+        // Verificar si la publicación existe
+        if (publicacion != null) {
+            // Obtener la lista de comentarios de la publicación
+            List<Comentario> comentarios = publicacion.getComentarios();
 
-        // Buscar el comentario por su ID en la lista de comentarios
-        for (Comentario comentario : comentarios) {
-            if (comentario.getId() == comentarioId) {
-                // Devolver el comentario si se encuentra
-                return comentario;
+            // Buscar el comentario por su ID en la lista de comentarios
+            for (Comentario comentario : comentarios) {
+                if (comentario.getId() == comentarioId) {
+                    // Devolver el comentario si se encuentra
+                    return comentario;
+                }
             }
         }
+
+        // Devolver null si la publicación o el comentario no se encuentran
+        return null;
     }
 
-    // Devolver null si la publicación o el comentario no se encuentran
-    return null;
-}
+    // Método de ayuda para buscar una publicación por su ID
+    private Publicacion buscarPublicacionPorId(int id) {
+        for (Publicacion publicacion : publicaciones) {
+            if (publicacion.getId() == id) {
+                return publicacion;
+            }
+        }
+        return null;
+    }
 
-// Método de ayuda para buscar una publicación por su ID
-private Publicacion buscarPublicacionPorId(int id) {
-    for (Publicacion publicacion : publicaciones) {
-        if (publicacion.getId() == id) {
-            return publicacion;
+    @GetMapping("/publicaciones/{id}/promedio-calificaciones")
+    public double obtenerPromedioCalificaciones(@PathVariable int id) {
+        // Encontrar la publicación por su ID
+        Publicacion publicacion = publicaciones.stream()
+                .filter(p -> p.getId() == id)
+                .findFirst()
+                .orElse(null);
+        
+        // Calcular el promedio de calificaciones si la publicación existe
+        return publicacion != null ? publicacion.calcularPromedioCalificaciones() : 0.0;
+    }
+
+    @GetMapping("/publicaciones/{id}/calificaciones")
+    public List<Integer> obtenerCalificacionesPorPublicacion(@PathVariable int id) {
+        // Buscar la publicación por su ID
+        Publicacion publicacion = obtenerPublicacionPorId(id);
+
+        // Verificar si la publicación existe
+        if (publicacion != null) {
+            // Retornar las calificaciones de la publicación
+            return publicacion.getCalificaciones();
+        } else {
+            // Manejar el caso en que la publicación no existe
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Publicación no encontrada");
         }
     }
-    return null;
-}
-
 }
  
