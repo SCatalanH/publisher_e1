@@ -16,7 +16,7 @@ public class PublicacionController {
 
     public PublicacionController() {    
         this.publicaciones = new ArrayList<>();
-        // Datos de ejemplo
+        
         this.publicaciones.add(new Publicacion(1, "Ingenieria de Software", "Esta prueba es de la carrera de Ing de Software", Arrays.asList(4, 5, 3), Arrays.asList(
             new Comentario(1, 1, "Veremos si me acuerdo de algo de lo que vi el semestre pasado"),
             new Comentario(2, 1, "Definitivamente no recuerdo nada")
@@ -49,10 +49,10 @@ public class PublicacionController {
 
     @GetMapping("/publicaciones/{id}")
     public Publicacion obtenerPublicacionPorId(@PathVariable int id) {
-    // Buscar la publicación correspondiente al ID
+    
     for (Publicacion publicacion : publicaciones) {
         if (publicacion.getId() == id) {
-            // Si se encuentra la publicación, devolverla
+            
             return publicacion;
         }
     }
@@ -62,7 +62,7 @@ public class PublicacionController {
     public List<Comentario> obtenerComentariosDePublicacion(@PathVariable int id) {
         Publicacion publicacion = null;
 
-        // Buscar la publicación correspondiente al ID
+        
         for (Publicacion p : publicaciones) {
             if (p.getId() == id) {
                 publicacion = p;
@@ -71,38 +71,36 @@ public class PublicacionController {
         }
 
         if (publicacion == null) {
-            // Manejar el caso donde no se encuentra la publicación
-            return Collections.emptyList(); // Devolver una lista vacía de comentarios
+           
+            return Collections.emptyList(); 
         }
 
-        // Devolver los comentarios asociados a la publicación
+        
         return publicacion.getComentarios();
     }
 
     @GetMapping("/publicaciones/{publicacionId}/comentarios/{comentarioId}")
     public Comentario obtenerComentarioDePublicacion(@PathVariable int publicacionId, @PathVariable int comentarioId) {
-        // Buscar la publicación por su ID
+       
         Publicacion publicacion = buscarPublicacionPorId(publicacionId);
 
-        // Verificar si la publicación existe
         if (publicacion != null) {
-            // Obtener la lista de comentarios de la publicación
+            
             List<Comentario> comentarios = publicacion.getComentarios();
-
-            // Buscar el comentario por su ID en la lista de comentarios
+            
             for (Comentario comentario : comentarios) {
                 if (comentario.getId() == comentarioId) {
-                    // Devolver el comentario si se encuentra
+                   
                     return comentario;
                 }
             }
         }
 
-        // Devolver null si la publicación o el comentario no se encuentran
+        
         return null;
     }
 
-    // Método de ayuda para buscar una publicación por su ID
+    
     private Publicacion buscarPublicacionPorId(int id) {
         for (Publicacion publicacion : publicaciones) {
             if (publicacion.getId() == id) {
@@ -114,29 +112,28 @@ public class PublicacionController {
 
     @GetMapping("/publicaciones/{id}/promedio-calificaciones")
     public double obtenerPromedioCalificaciones(@PathVariable int id) {
-        // Encontrar la publicación por su ID
+        
         Publicacion publicacion = publicaciones.stream()
                 .filter(p -> p.getId() == id)
                 .findFirst()
                 .orElse(null);
         
-        // Calcular el promedio de calificaciones si la publicación existe
+        
         return publicacion != null ? publicacion.calcularPromedioCalificaciones() : 0.0;
     }
 
     @GetMapping("/publicaciones/{id}/calificaciones")
     public List<Integer> obtenerCalificacionesPorPublicacion(@PathVariable int id) {
-        // Buscar la publicación por su ID
+        
         Publicacion publicacion = obtenerPublicacionPorId(id);
 
-        // Verificar si la publicación existe
+        
         if (publicacion != null) {
-            // Retornar las calificaciones de la publicación
+            
             return publicacion.getCalificaciones();
         } else {
-            // Manejar el caso en que la publicación no existe
+            
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Publicación no encontrada");
         }
     }
-}
- 
+} 
